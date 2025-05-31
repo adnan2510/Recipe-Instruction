@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { recipecontext } from "../context/RecipeContext";
 import { set, useForm } from "react-hook-form";
@@ -39,18 +39,38 @@ const SingleRecipies = () => {
     navigate("/Recipies");
   };
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   console.log("SingleRecipe component mounted"); //--> Run When the component Created
+  //   return () => {
+  //     console.log("SingleRecipe component unmounted"); //--> Run When the component Deleted
+  //   };
+  // }, []); //[] --> Run when component Updated. If Dependency Array is not Present then the component will be rendered (Deleted and Created) else it will be Updated changes only in the view
+
+const [Favorite, setFavorite] = useState(
+  JSON.parse(localStorage.getItem("fav")) || []
+);  
+
+const FavHandler = () => {
+  let copyFav = [...Favorite];
+  copyFav.push(recipe);
+  localStorage.setItem("fav", JSON.stringify(copyFav));
+  setFavorite(copyFav);
+  toast.success("Recipe added to favorites");
+};
+
+const UnFavHandler = () => {
+  const filterFav = Favorite.filter((fav) => fav.id != recipe?.id);
+  setFavorite(filterFav);
+  localStorage.setItem("fav", JSON.stringify(filterFav));
+  toast.error("Recipe removed from favorites");
+};
+
+useEffect(() => {
     console.log("SingleRecipe component mounted"); //--> Run When the component Created
     return () => {
       console.log("SingleRecipe component unmounted"); //--> Run When the component Deleted
     };
-  }, []); //[] --> Run when component Updated. If Dependency Array is not Present then the component will be rendered (Deleted and Created) else it will be Updated changes only in the view
-
-
-const FavHandler = () => {}
-const UnFavHandler = () => {}
-
-
+  }, [Favorite]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">
@@ -61,17 +81,21 @@ const UnFavHandler = () => {}
         {/* Left Column */}
         <div className="space-y-8">
           <div className="overflow-hidden rounded-xl shadow-2xl relative">
-            {/* Heart Icon - Purely Decorative */}
-            <i onClick={FavHandler} className="ri-heart-line absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
-            <i onClick={UnFavHandler} className="ri-heart-fill absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
-
+            {Favorite.find((f) => f.id == recipe?.id) ? (
+              <i
+                onClick={UnFavHandler}
+                className="ri-heart-fill absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
+            ) : (
+              <i
+                onClick={FavHandler}
+                className="ri-heart-line absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
+            )}
             <img
               src={recipe?.image}
               alt={recipe?.title}
               className="w-full h-96 object-cover"
             />
-
-            {/* Chef Info Overlay (unchanged) */}
+            {/* Chef Info Overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
               <div className="flex items-center space-x-4">
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
