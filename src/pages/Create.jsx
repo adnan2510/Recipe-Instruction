@@ -18,7 +18,6 @@ const Create = () => {
     setdata(copydata);
     localStorage.setItem("recipes", JSON.stringify(copydata));
 
-
     toast.success("Recipe added successfully!");
     reset();
     navigate("/Recipies");
@@ -111,10 +110,10 @@ const Create = () => {
                 {...register("ingr")}
                 rows={5}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base font-mono"
-                placeholder="Enter each ingredient on a new line:
+                placeholder={`Enter each ingredient on a new line:
 - 2 cups flour
 - 1 tsp salt
-- 3 eggs"
+- 3 eggs`}
                 required
               />
             </div>
@@ -128,10 +127,10 @@ const Create = () => {
                 {...register("inst")}
                 rows={5}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-base font-mono"
-                placeholder="Enter each step on a new line:
+                placeholder={`Enter each step on a new line:
 1. Preheat oven to 350°F
 2. Mix dry ingredients
-3. Add wet ingredients"
+3. Add wet ingredients`}
                 required
               />
             </div>

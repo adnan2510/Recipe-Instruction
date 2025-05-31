@@ -2,18 +2,20 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const PageNotFound = () => {
-     const navigate = useNavigate();
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden p-8 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center px-4 py-12">
+      <div className="max-w-lg w-full bg-white p-10 rounded-2xl shadow-2xl text-center">
         <div className="flex justify-center mb-6">
-          <div className="bg-red-100 p-4 rounded-full">
+          <div className="bg-red-100 p-4 rounded-full shadow-inner">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 text-red-500"
+              className="h-12 w-12 text-red-600"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor">
+              stroke="currentColor"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -24,20 +26,18 @@ const PageNotFound = () => {
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">404</h1>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
-          Page Not Found
-        </h2>
+        <h1 className="text-5xl font-bold text-gray-800 mb-2">404</h1>
+        <p className="text-xl text-gray-600 mb-6">Oops! Page not found</p>
 
-        <p className="text-gray-600 mb-6">
-          Oops! The page you're looking for doesn't exist or has been moved.
+        <p className="text-gray-500 mb-8">
+          The page you’re looking for doesn’t exist or may have been moved.
         </p>
 
         <button
           onClick={() => navigate("/")}
-          className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
         >
-          Go Back Home
+          ← Back to Home
         </button>
       </div>
     </div>

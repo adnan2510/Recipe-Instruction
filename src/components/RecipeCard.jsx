@@ -17,14 +17,13 @@ const RecipeCard = (props) => {
         />
       </div>
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">{name}</h2>
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">{title}</h2>
         <p className="text-gray-600 text-sm mb-3">
-          {desc.slice(0, 100)}...
+          {desc ? `${desc.slice(0, 100)}...` : 'No description available'}
           <span className="text-blue-500 font-medium"> Read more</span>
         </p>
         <div className="text-sm text-gray-500">
           <p><span className="font-semibold text-gray-700">Chef:</span> {chef}</p>
-          <p><span className="font-semibold text-gray-700">Recipe ID:</span> {id}</p>
         </div>
       </div>
     </Link>

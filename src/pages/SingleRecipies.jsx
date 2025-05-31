@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { recipecontext } from "../context/RecipeContext";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 const SingleRecipies = () => {
@@ -35,45 +35,50 @@ const SingleRecipies = () => {
     setdata(filterdata);
     localStorage.setItem("recipes", JSON.stringify(filterdata));
 
+    const fav = JSON.parse(localStorage.getItem("fav")) || [];
+    const updatedFav = fav.filter((favRecipe) => favRecipe.id != params.id);
+    localStorage.setItem("fav", JSON.stringify(updatedFav));
+
     toast.error("Delete Recipe");
     navigate("/Recipies");
   };
 
-  // useEffect(() => {
-  //   console.log("SingleRecipe component mounted"); //--> Run When the component Created
-  //   return () => {
-  //     console.log("SingleRecipe component unmounted"); //--> Run When the component Deleted
-  //   };
-  // }, []); //[] --> Run when component Updated. If Dependency Array is not Present then the component will be rendered (Deleted and Created) else it will be Updated changes only in the view
+  const [Favorite, setFavorite] = useState(
+    JSON.parse(localStorage.getItem("fav")) || []
+  );
 
-const [Favorite, setFavorite] = useState(
-  JSON.parse(localStorage.getItem("fav")) || []
-);  
+  const FavHandler = () => {
+    let copyFav = [...Favorite];
+    copyFav.push(recipe);
+    localStorage.setItem("fav", JSON.stringify(copyFav));
+    setFavorite(copyFav);
+    toast.success("Recipe added to favorites");
+  };
 
-const FavHandler = () => {
-  let copyFav = [...Favorite];
-  copyFav.push(recipe);
-  localStorage.setItem("fav", JSON.stringify(copyFav));
-  setFavorite(copyFav);
-  toast.success("Recipe added to favorites");
-};
+  const UnFavHandler = () => {
+    const filterFav = Favorite.filter((fav) => fav.id != recipe?.id);
+    setFavorite(filterFav);
+    localStorage.setItem("fav", JSON.stringify(filterFav));
+    toast.error("Recipe removed from favorites");
+  };
 
-const UnFavHandler = () => {
-  const filterFav = Favorite.filter((fav) => fav.id != recipe?.id);
-  setFavorite(filterFav);
-  localStorage.setItem("fav", JSON.stringify(filterFav));
-  toast.error("Recipe removed from favorites");
-};
+  useEffect(() => {
+    if (recipe) {
+      reset({
+        title: recipe.title,
+        chef: recipe.chef,
+        image: recipe.image,
+        inst: recipe.inst,
+        desc: recipe.desc,
+        ingr: recipe.ingr,
+        category: recipe.category,
+      });
+    }
+  }, [recipe, reset]);
 
-useEffect(() => {
-    console.log("SingleRecipe component mounted"); //--> Run When the component Created
-    return () => {
-      console.log("SingleRecipe component unmounted"); //--> Run When the component Deleted
-    };
-  }, [Favorite]);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-12">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 py-12 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-4xl font-bold text-center text-amber-900 mb-12">
         {recipe?.title}
       </h1>
 
@@ -81,14 +86,18 @@ useEffect(() => {
         {/* Left Column */}
         <div className="space-y-8">
           <div className="overflow-hidden rounded-xl shadow-2xl relative">
-            {Favorite.find((f) => f.id == recipe?.id) ? (
+            {Favorite.some((f) => f.id == recipe?.id) ? (
               <i
                 onClick={UnFavHandler}
-                className="ri-heart-fill absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
+                className="ri-heart-fill absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full cursor-pointer"
+                title="Remove from favorites"
+              ></i>
             ) : (
               <i
                 onClick={FavHandler}
-                className="ri-heart-line absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full"></i>
+                className="ri-heart-line absolute top-4 right-4 z-10 p-2 text-red-700 text-4xl bg-white/80 backdrop-blur-sm rounded-full cursor-pointer"
+                title="Add to favorites"
+              ></i>
             )}
             <img
               src={recipe?.image}
@@ -99,14 +108,16 @@ useEffect(() => {
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
               <div className="flex items-center space-x-4">
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                  <h3 className="text-white text-xl font-semibold">Chef</h3>
-                  <p className="text-white text-lg">
+                  <h3 className="text-amber-100 text-xl font-semibold">Chef</h3>
+                  <p className="text-amber-200 text-lg">
                     {recipe?.chef || "Unknown Chef"}
                   </p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg">
-                  <h3 className="text-white text-xl font-semibold">Category</h3>
-                  <p className="text-white text-lg capitalize">
+                  <h3 className="text-amber-100 text-xl font-semibold">
+                    Category
+                  </h3>
+                  <p className="text-amber-200 text-lg capitalize">
                     {recipe?.category || "Uncategorized"}
                   </p>
                 </div>
@@ -117,25 +128,25 @@ useEffect(() => {
           {/* Instructions Section */}
           <div className="bg-white p-8 rounded-xl shadow-lg">
             <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-2xl font-semibold text-amber-900 mb-4">
                 Cooking Instructions
               </h2>
-              <p>{recipe?.inst}</p>
+              <p className="text-amber-800">{recipe?.inst}</p>
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-2xl font-semibold text-amber-900 mb-4">
                 About This Recipe
               </h2>
-              <p className="text-gray-600 leading-relaxed">{recipe?.desc}</p>
+              <p className="text-amber-700 leading-relaxed">{recipe?.desc}</p>
             </div>
 
             {recipe?.ingr && (
               <div className="mt-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                <h3 className="text-xl font-semibold text-amber-900 mb-3">
                   Ingredients
                 </h3>
-                <p>{recipe.ingr}</p>
+                <p className="text-amber-800">{recipe.ingr}</p>
               </div>
             )}
           </div>
@@ -145,90 +156,92 @@ useEffect(() => {
         <div className="space-y-8">
           <form
             onSubmit={handleSubmit(UpdateHandler)}
-            className="bg-white p-8 rounded-xl shadow-2xl space-y-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            className="bg-white p-8 rounded-xl shadow-2xl space-y-6"
+          >
+            <h2 className="text-2xl font-semibold text-amber-900 mb-6">
               Edit Recipe
             </h2>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Recipe Image URL
               </label>
               <input
                 {...register("image")}
                 type="url"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="Paste image URL"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Recipe Title
               </label>
               <input
                 {...register("title")}
                 type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="Enter recipe title"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Chef
               </label>
               <input
                 {...register("chef")}
                 type="text"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="Enter chef's name"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Description
               </label>
               <textarea
                 {...register("desc")}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="Describe your recipe..."
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Ingredients
               </label>
               <textarea
                 {...register("ingr")}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="List ingredients (one per line)"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Instructions
               </label>
               <textarea
                 {...register("inst")}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder="List instructions (one per line)"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-amber-800">
                 Category
               </label>
               <select
                 {...register("category")}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                className="w-full px-4 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+              >
                 <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
                 <option value="dinner">Dinner</option>
@@ -241,13 +254,15 @@ useEffect(() => {
             <div className="flex justify-between gap-4">
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg shadow-md">
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-4 rounded-lg shadow-md"
+              >
                 Update Recipe
               </button>
               <button
                 type="button"
                 onClick={DeleteHandle}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg shadow-md">
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg shadow-md"
+              >
                 Delete Recipe
               </button>
             </div>
