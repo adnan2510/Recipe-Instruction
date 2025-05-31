@@ -5,6 +5,8 @@ import About from "../pages/About";
 import Recipies from "../pages/Recipies";
 import Create from "../pages/Create";
 import SingleRecipies from "../pages/SingleRecipies";
+import PageNotFound from "../pages/PageNotFound";
+import Fav from "../pages/Fav";
 
 const Mainrouter = () => {
   return (
@@ -15,6 +17,8 @@ const Mainrouter = () => {
         <Route path="/Recipies/details/:id" element={<SingleRecipies />} />
         <Route path="/create-recipies" element={<Create />} />
         <Route path="/About" element={<About />} />
+        <Route path="/Fav" element={<Fav />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </div>
   );

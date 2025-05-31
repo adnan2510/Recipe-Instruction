@@ -28,6 +28,12 @@ const Navbar = () => {
       >
         Create
       </NavLink>
+      <NavLink 
+        to={"/Fav"} 
+        className={({isActive}) => isActive ? "text-blue-500 font-medium" : "text-gray-600"}
+      >
+        Favorites
+      </NavLink>
     </div>
   )
 }
